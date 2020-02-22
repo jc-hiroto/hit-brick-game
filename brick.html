@@ -7,14 +7,14 @@
 </head>
 <body>
 
-<div id="StartScr">
+<div id="startScr">
 <div class="wrapper">
-    <h1 align="center" class="Gtitle">Brick</h1>
-    <button class="button" onclick="start()"><img src="image/start.png"></button>
+    <h1 align="center" class="Gtitle">Hit the Brick</h1>
+    <input type = "image" id="startBtn" class="button" onclick="start()" src="image/start.png"/>
 </div>
 </div>
 
-<canvas id="game" width="480" height="320" style="visibility = "hidden";"></canvas>
+<canvas id="game" width="480" height="320" style="display: none;";></canvas>
 <h3 class = "Gtitle" align="center">Speed</h3>
 <div class="sliderHolder">
 <input type = "range" min="1" max="5" value="3" step="0.5" class = "slider" id="speedSlider"/>
@@ -28,6 +28,8 @@
 <div class="output" id="senOut"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script defer src = 'brick.js'></script>
+
+<p class="policy">By jc-hiroto. 2020</p>
 
 </body>
 </html>

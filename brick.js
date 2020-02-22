@@ -166,20 +166,18 @@ function draw(){
         dx = -dx;
     }
     if(rightPressed){
-        paddleX += senVal*2;
+        paddleX += senVal*1.5;
         if(paddleX + paddleWidth > canvas.width)
             paddleX = canvas.width - paddleWidth;
     }
     if(leftPressed){
-        paddleX -= senVal*2;
+        paddleX -= senVal*1.5;
         if(paddleX < 0)
             paddleX = 0;
     }
     requestAnimationFrame(draw);
 }
 function start () {
-    document.getElementById('StartScr').style.visibility = "hidden";
-    document.getElementById('game').style.visibility = "visible";
     dx = dxSet;
     dy = dySet;
     hitPoint = speedVal*2;
@@ -190,13 +188,17 @@ function setup(){
     $("#speedSlider").on("change",function(){
         speedVal = $(this).val();
         dxSet = speedVal;
-        dySet = speedVal*-1.5;
+        dySet = speedVal*-0.5;
         $('#speedOut').html(speedVal)
     });
     $("#senSlider").on("change",function(){
         senVal = $(this).val();
-
         $('#senOut').html(senVal)
     });
 }
 setup();
+$("#startBtn").click(function () {
+        $("#startScr").hide();
+        $("#game").show();
+        start();
+    });

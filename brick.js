@@ -206,6 +206,7 @@ function setup(){
         $('#senOut').html(senVal)
     });
 }
+setup();
 $("#startBtn").click(function () {
         $("#startScr").hide();
         $("#game").show();

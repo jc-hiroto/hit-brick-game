@@ -178,6 +178,7 @@ function draw(){
     requestAnimationFrame(draw);
 }
 function start () {
+    setup();
     dx = dxSet;
     dy = dySet;
     hitPoint = speedVal*2;
@@ -196,7 +197,6 @@ function setup(){
         $('#senOut').html(senVal)
     });
 }
-setup();
 $("#startBtn").click(function () {
         $("#startScr").hide();
         $("#game").show();

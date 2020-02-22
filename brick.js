@@ -1,11 +1,12 @@
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var x = canvas.width/2;
-var y = canvas.height-30;
-var dx = 2;
-var dy = -3;
-var dxSet = 2;
-var dySet = -3;
+var y = canvas.height-40;
+var speedVal = 3;
+var dxReset = speedVal*1.5;
+var dyReset = speedVal*(-1);
+var dx = dxReset;
+var dy = dyReset;
 var ballRad = 10;
 var speed = 10;
 var paddleHeight = 10;
@@ -26,7 +27,6 @@ var score = 0;
 var hitPoint = 6;
 var lives = 3;
 var bricks = [];
-var speedVal = 3;
 var senVal = 3;
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -34,6 +34,9 @@ document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove",mouseMoveHandler, false);
 
 function brickInit(){
+    totalBrick = 0;
+    level = document.getElementById("levelSel").value;
+    brickRow = level;
     for(var col = 0; col<brickCol; col++){
         bricks[col] = [];
         for(var row = 0; row<brickRow; row++){
@@ -144,10 +147,12 @@ function draw(){
     y += dy;
     if(y + dy < ballRad){
         dy = -dy;
+        console.log('UPflip');
     }
-    else if(y + dy + ballRad> canvas.height && lives!=0){
+    else if(y + ballRad > canvas.height - paddleHeight  && lives!=0){
         if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth){
             dy = -dy;
+            console.log('DOWNflip')
         }
         else if(y + dy > canvas.height){
             lives--;
@@ -160,8 +165,8 @@ function draw(){
                 hitPoint = speedVal*2;
                 x = canvas.width/2;
                 y = canvas.height-30;
-                dx = dxSet;
-                dy = dySet;
+                setSpeed();
+                console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
                 paddleX = (canvas.width-paddleWidth)/2;
             }
 
@@ -182,33 +187,33 @@ function draw(){
     }
     requestAnimationFrame(draw);
 }
-function start () {
-    dxSet = speedVal;
-    dySet = speedVal*-0.5;
-    dx = dxSet;
-    dy = dySet;
-    console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
+
+function setSpeed(){
+    dyReset = speedVal*(-1);
+    dxReset = speedVal*1.5;
+    dy = dyReset;
+    dx = dxReset;
     hitPoint = speedVal*2;
-    totalBrick = 0;
-    level = document.getElementById("levelSel").value;
-    brickRow = level;
-    brickInit();
-    draw();
-};
+    console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
+}
 function setup(){
-    $("#speedSlider").on("change",function(){
+    $(document).on('change',"#speedSlider",function(){
         speedVal = $(this).val();
         $('#speedOut').html(speedVal)
+        console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
     });
-    $("#senSlider").on("change",function(){
+    $(document).on("change","#senSlider",function(){
         senVal = $(this).val();
         $('#senOut').html(senVal)
+        console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
     });
 }
 setup();
 $("#startBtn").click(function () {
-        $("#startScr").hide();
-        $("#game").show();
+    $("#startScr").hide();
+    $("#game").show();
+    setSpeed();
+    brickInit();
+    draw();
 
-        start();
-    });
+});

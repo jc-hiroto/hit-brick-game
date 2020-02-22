@@ -15,6 +15,14 @@
 </div>
 
 <canvas id="game" width="480" height="320" style="display: none;";></canvas>
+<h3 class = "Gtitle" align="center">Level</h3>
+<div align="center">
+<select id ="levelSel">
+    <option value="1">Easy (1 row)</option>
+    <option value="3" selected="selected">Medium (3 rows)</option>
+    <option value="5">Hard (5 rows)</option>
+</select>
+</div>
 <h3 class = "Gtitle" align="center">Speed</h3>
 <div class="sliderHolder">
 <input type = "range" min="1" max="5" value="3" step="0.5" class = "slider" id="speedSlider"/>
@@ -26,10 +34,11 @@
 <input type = "range" min="1" max="5" value="3" step="0.5" class = "slider" id="senSlider"/>
 </div>
 <div class="output" id="senOut"></div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script defer src = 'brick.js'></script>
 
-<p class="policy">By jc-hiroto. 2020</p>
+<p class="policy">By jc-hiroto. 20200222 V1.2</p>
 
 </body>
 </html>

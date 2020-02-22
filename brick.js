@@ -13,7 +13,8 @@ var paddleWidth = 75;
 var paddleX = (canvas.width-paddleWidth)/2;
 var rightPressed = false;
 var leftPressed = false;
-var brickRow = 1;
+var level = 3;
+var brickRow = level;
 var brickCol = 5;
 var totalBrick = 0;
 var brickWidth = 75;
@@ -27,16 +28,19 @@ var lives = 3;
 var bricks = [];
 var speedVal = 3;
 var senVal = 3;
-for(var col = 0; col<brickCol; col++){
-    bricks[col] = [];
-    for(var row = 0; row<brickRow; row++){
-        bricks[col][row] = {x: 0, y:0, status:1};
-    }
-}
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove",mouseMoveHandler, false);
+
+function brickInit(){
+    for(var col = 0; col<brickCol; col++){
+        bricks[col] = [];
+        for(var row = 0; row<brickRow; row++){
+            bricks[col][row] = {x: 0, y:0, status:1};
+        }
+    }
+}
 
 function keyDownHandler(e){
     if(e.key == "Right" || e.key == "ArrowRight"){
@@ -152,6 +156,7 @@ function draw(){
                 document.location.reload();
             }
             else{
+                alert("=== YOU DIE === \n [ Live left: "+lives+" ]");
                 hitPoint = speedVal*2;
                 x = canvas.width/2;
                 y = canvas.height-30;
@@ -183,6 +188,10 @@ function start () {
     dy = dySet;
     hitPoint = speedVal*2;
     totalBrick = 0;
+    level = document.getElementById("levelSel").value;
+    brickRow = level;
+    brickInit();
+    console.log(level+" "+brickRow);
     draw();
 };
 function setup(){
@@ -200,5 +209,6 @@ function setup(){
 $("#startBtn").click(function () {
         $("#startScr").hide();
         $("#game").show();
+
         start();
     });

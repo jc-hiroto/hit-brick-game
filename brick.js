@@ -135,21 +135,21 @@ function drawLives(){
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
-    drawball();
     drawPaddle();
     drawScore();
     drawLives();
     collisionDetection();
+    drawball();
     x += dx;
     y += dy;
     if(y + dy < ballRad){
         dy = -dy;
     }
-    else if(y + dy + ballRad> canvas.height- paddleHeight){
+    else if(y + dy + ballRad> canvas.height && lives!=0){
         if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth){
             dy = -dy;
         }
-        else{
+        else if(y + dy > canvas.height){
             lives--;
             if(!lives){
                 alert("=== GAME OVER === \n [ Your Score: "+score+" ]");
@@ -183,22 +183,21 @@ function draw(){
     requestAnimationFrame(draw);
 }
 function start () {
-    setup();
+    dxSet = speedVal;
+    dySet = speedVal*-0.5;
     dx = dxSet;
     dy = dySet;
+    console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
     hitPoint = speedVal*2;
     totalBrick = 0;
     level = document.getElementById("levelSel").value;
     brickRow = level;
     brickInit();
-    console.log(level+" "+brickRow);
     draw();
 };
 function setup(){
     $("#speedSlider").on("change",function(){
         speedVal = $(this).val();
-        dxSet = speedVal;
-        dySet = speedVal*-0.5;
         $('#speedOut').html(speedVal)
     });
     $("#senSlider").on("change",function(){

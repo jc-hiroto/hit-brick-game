@@ -1,0 +1,26 @@
+canvas { background: #eee; display: block; margin: 0 auto; }
+
+.wrapper {
+    margin:0px auto;
+    width:64px;
+}
+
+.button {
+    position: absolute;
+    top: 25%;
+    size:100%;
+}
+.Gtitle{
+    color: #0095dd;
+}
+.slider{
+    width: 200px;
+}
+.sliderHolder{
+    width: 200px;
+    margin:0 auto;
+}
+.output{
+    width: 5px;
+    margin:0 auto;
+}

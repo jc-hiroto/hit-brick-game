@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Brick</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="StartScr">
+<div class="wrapper">
+    <h1 align="center" class="Gtitle">Brick</h1>
+    <button class="button" onclick="start()"><img src="image/start.png"></button>
+</div>
+</div>
+
+<canvas id="game" width="480" height="320" style="visibility = "hidden";"></canvas>
+<h3 class = "Gtitle" align="center">Speed</h3>
+<div class="sliderHolder">
+<input type = "range" min="1" max="5" value="3" step="0.5" class = "slider" id="speedSlider"/>
+</div>
+<div class="output" id="speedOut"></div>
+
+<h3 class = "Gtitle" align="center">Sensitivity</h3>
+<div class="sliderHolder">
+<input type = "range" min="1" max="5" value="3" step="0.5" class = "slider" id="senSlider"/>
+</div>
+<div class="output" id="senOut"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script defer src = 'brick.js'></script>
+
+</body>
+</html>

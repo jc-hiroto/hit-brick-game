@@ -2,6 +2,7 @@ var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var x = canvas.width/2;
 var y = canvas.height-40;
+var startcheck = false;
 var speedVal = 3;
 var dxReset = speedVal*1.5;
 var dyReset = speedVal*(-1);
@@ -14,6 +15,7 @@ var paddleWidth = 75;
 var paddleX = (canvas.width-paddleWidth)/2;
 var rightPressed = false;
 var leftPressed = false;
+var downPressed = false;
 var level = 3;
 var brickRow = level;
 var brickCol = 5;
@@ -52,6 +54,9 @@ function keyDownHandler(e){
     else if(e.key == "Left" || e.key == "ArrowLeft"){
         leftPressed = true;
     }
+    else if(e.key == "Down" || e.key =="ArrowDown"){
+        downPressed = true;
+    }
 }
 function keyUpHandler(e){
     if(e.key == "Right" || e.key == "ArrowRight"){
@@ -59,6 +64,9 @@ function keyUpHandler(e){
     }
     else if(e.key == "Left" || e.key == "ArrowLeft"){
         leftPressed = false;
+    }
+    else if(e.key == "Down" || e.key =="ArrowDown"){
+        downPressed = false;
     }
 }
 
@@ -135,46 +143,22 @@ function drawLives(){
     ctx.fillText("Lives: " +lives, canvas.width-65, 20);
 }
 
+function drawStartMessage(){
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "0095DD";
+    ctx.fillText("Press Down Key to Start", canvas.width/2-100, canvas.height/2);
+}
+
+
+
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
     drawPaddle();
     drawScore();
     drawLives();
-    collisionDetection();
     drawball();
-    x += dx;
-    y += dy;
-    if(y + dy < ballRad){
-        dy = -dy;
-        console.log('UPflip');
-    }
-    else if(y + ballRad > canvas.height - paddleHeight  && lives!=0){
-        if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth){
-            dy = -dy;
-            console.log('DOWNflip')
-        }
-        else if(y + dy > canvas.height){
-            lives--;
-            if(!lives){
-                alert("=== GAME OVER === \n [ Your Score: "+score+" ]");
-                document.location.reload();
-            }
-            else{
-                alert("=== YOU DIE === \n [ Live left: "+lives+" ]");
-                hitPoint = speedVal*2;
-                x = canvas.width/2;
-                y = canvas.height-30;
-                setSpeed();
-                console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
-                paddleX = (canvas.width-paddleWidth)/2;
-            }
-
-        }
-    }
-    if(x + dx < ballRad || x + dx + ballRad> canvas.width){
-        dx = -dx;
-    }
+    collisionDetection();
     if(rightPressed){
         paddleX += senVal*1.5;
         if(paddleX + paddleWidth > canvas.width)
@@ -184,6 +168,47 @@ function draw(){
         paddleX -= senVal*1.5;
         if(paddleX < 0)
             paddleX = 0;
+    }
+    if(startcheck == false){
+        if(downPressed){
+            startcheck = true;
+        }
+        drawStartMessage();
+        x=paddleX+paddleWidth/2;
+    }
+    else{
+        x += dx;
+        y += dy;
+        if(y + dy < ballRad){
+            dy = -dy;
+            console.log('UPflip');
+        }
+        else if(y + ballRad > canvas.height - paddleHeight  && lives!=0){
+            if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth){
+                dy = -dy;
+                console.log('DOWNflip')
+            }
+            else if(y + dy > canvas.height){
+                lives--;
+                if(!lives){
+                    alert("=== GAME OVER === \n [ Your Score: "+score+" ]");
+                    document.location.reload();
+                }
+                else{
+                    alert("=== YOU DIE === \n [ Live left: "+lives+" ]");
+                    hitPoint = speedVal*2;
+                    x = canvas.width/2;
+                    y = canvas.height-30;
+                    setSpeed();
+                    console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
+                    paddleX = (canvas.width-paddleWidth)/2;
+                    startcheck = false;
+                }
+            }
+        }
+        if(x + dx < ballRad || x + dx + ballRad> canvas.width){
+            dx = -dx;
+        }
     }
     requestAnimationFrame(draw);
 }
@@ -214,6 +239,6 @@ $("#startBtn").click(function () {
     $("#game").show();
     setSpeed();
     brickInit();
+    startcheck = false;
     draw();
-
 });

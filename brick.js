@@ -203,6 +203,9 @@ function draw(){
                     console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
                     paddleX = (canvas.width-paddleWidth)/2;
                     startcheck = false;
+                    leftPressed = false;
+                    rightPressed = false;
+                    downPressed = false;
                 }
             }
         }

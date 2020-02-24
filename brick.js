@@ -40,6 +40,10 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove",mouseMoveHandler, false);
 
+function getRandom(min,max){
+    return m.floor(m.random()*(max-min+1))+min;
+};
+
 function brickInit(){
     totalBrick = 0;
     level = document.getElementById("levelSel").value;
@@ -48,7 +52,7 @@ function brickInit(){
         bricks[col] = [];
         for(var row = 0; row<brickRow; row++){
             bricks[col][row] = {x: 0, y:0, status:1};
-            if(m.floor(m.random()*10) == 7){
+            if(getRandom(0,10) == 7){
                 bricks[col][row].status = 2;
             }
         }
@@ -130,6 +134,19 @@ function speedCheck(){
     console.log("BALL speed: " + ballSpeed);
 }
 
+function randSpeed(){
+    var rand = getRandom(7,10)/10.0;
+    var pos = getRandom(0,1);
+    dyReset = speedVal * rand * (-1);
+    rand = getRandom(12,15)/10.0;
+    if(pos){
+        dxReset = speedVal * rand*(-1);
+    }
+    else{
+        dxReset = speedVal * rand;
+    }
+}
+
 function drawPaddle(){
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
@@ -196,7 +213,7 @@ function collisionDetection(){
                     score += hitPoint;
                 }
                 else if((x>b.x && x<b.x+brickWidth && y-ballRad>b.y && y-ballRad<b.y+brickHeight)||(x>b.x && x<b.x+brickWidth && y+ballRad>b.y && y+ballRad<b.y+brickHeight)){
-                    dy=-dy
+                    dy=-dy;
                     b.status = 1;
                     score += hitPoint;
                 }
@@ -229,7 +246,7 @@ function freezeGrow(){
         for(var row = 0; row<brickRow; row++){
             var b = bricks[col][row];
             if(b.status == 2){
-                if(m.floor(m.random()*500) == 1){
+                if(getRandom(0,500) == 1){
                     if(col < brickCol-1 ){
                         if(bricks[col+1][row].status != 0){
                             bricks[col+1][row].status = 2;
@@ -355,8 +372,7 @@ function draw(){
 }
 
 function setSpeed(){
-    dyReset = speedVal*(-1);
-    dxReset = speedVal*1.5;
+    randSpeed();
     dy = dyReset;
     dx = dxReset;
     hitPoint = speedVal*2;

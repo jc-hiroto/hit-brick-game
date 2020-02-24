@@ -1,5 +1,6 @@
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
+var m = Math;
 var x = canvas.width/2;
 var y = canvas.height-40;
 var startcheck = false;
@@ -7,6 +8,7 @@ var pause = false;
 var speedVal = 3;
 var dxReset = speedVal*1.5;
 var dyReset = speedVal*(-1);
+var ballSpeed = m.sqrt(dxReset**2 + dyReset**2);
 var dx = dxReset;
 var dy = dyReset;
 var ballRad = 10;
@@ -46,7 +48,7 @@ function brickInit(){
         bricks[col] = [];
         for(var row = 0; row<brickRow; row++){
             bricks[col][row] = {x: 0, y:0, status:1};
-            if(Math.floor(Math.random()*10) == 7){
+            if(m.floor(m.random()*10) == 7){
                 bricks[col][row].status = 2;
             }
         }
@@ -117,10 +119,15 @@ function drawBricks(){
 
 function drawball(){
     ctx.beginPath();
-    ctx.arc(x, y, ballRad, 0, Math.PI*2);
+    ctx.arc(x, y, ballRad, 0, m.PI*2);
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
+}
+
+function speedCheck(){
+    ballSpeed = m.sqrt(dx*dx + dy*dy);
+    console.log("BALL speed: " + ballSpeed);
 }
 
 function drawPaddle(){
@@ -129,6 +136,31 @@ function drawPaddle(){
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
+}
+
+function hitPaddle(){
+    var prevSpeed = ballSpeed;
+    if(rightPressed){
+        if(m.abs(dx + senVal*0.1) > prevSpeed){
+            console.log('delta EXCEED');
+        }
+        else{
+            dx += senVal*0.1;
+            console.log('More RIGHT');
+        }
+        dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
+    }
+    else if (leftPressed) {
+        if(m.abs(dx - senVal*0.1) > prevSpeed){
+            console.log('delta EXCEED');
+        }
+        else{
+            dx -= senVal*0.1;
+            console.log('More LEFT');
+        }
+        dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
+    }
+    console.log("prev SPEED: " + prevSpeed+" dx: "+dx+" dy: "+dy);
 }
 
 function collisionDetection(){
@@ -197,7 +229,7 @@ function freezeGrow(){
         for(var row = 0; row<brickRow; row++){
             var b = bricks[col][row];
             if(b.status == 2){
-                if(Math.floor(Math.random()*500) == 1){
+                if(m.floor(m.random()*500) == 1){
                     if(col < brickCol-1 ){
                         if(bricks[col+1][row].status != 0){
                             bricks[col+1][row].status = 2;
@@ -264,6 +296,7 @@ function draw(){
         ctx.fillText("Press Esc to Continue",canvas.width/2 - 100,canvas.height/2 + 50);
     }
     else{
+        speedCheck();
         if(rightPressed){
             paddleX += senVal*1.5;
             if(paddleX + paddleWidth > canvas.width){
@@ -280,17 +313,15 @@ function draw(){
         y += dy;
         if(y + dy < ballRad){
             dy = -dy;
-            console.log('UPflip');
         }
         else if(y + ballRad > canvas.height - paddleHeight  && lives!=0){
             if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth && !deadFlag){
                 deadFlag = false;
                 dy = -dy;
-                console.log('DOWNflip, deadFlag FALSE');
+                setTimeout(hitPaddle,10);
             }
             else{
                 deadFlag = true;
-                console.log('deadFlag TRUE');
             }
             if(y  > canvas.height && deadFlag){
                 lives--;

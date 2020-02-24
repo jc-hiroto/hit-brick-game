@@ -282,28 +282,48 @@ function freezeGrow(){
             var b = bricks[col][row];
             if(b.status == 2){
                 if(getRandom(0,500) == 1){
-                    if(col < brickCol-1 ){
-                        if(bricks[col+1][row].status != 0){
-                            bricks[col+1][row].status = 2;
-                            return;
-                        }
+                    var freezeOrder = [1,2,3,4];
+                    for(var cnt = 0;cnt<4;cnt++){
+                        var firstMove = Math.floor(Math.random()*3.99);
+                        var secondMove = Math.floor(Math.random()*3.99);
+                        var temp = freezeOrder[firstMove];
+                        freezeOrder[firstMove] = freezeOrder[secondMove];
+                        freezeOrder[secondMove] = temp;
                     }
-                    if(row < brickRow-1){
-                        if(bricks[col][row+1].status != 0){
-                            bricks[col][row+1].status = 2;
-                            return;
-                        }
-                    }
-                    if(col > 0 ){
-                        if(bricks[col-1][row].status != 0){
-                            bricks[col-1][row].status = 2;
-                            return;
-                        }
-                    }
-                    if(row > 0){
-                        if(bricks[col][row-1].status != 0){
-                            bricks[col][row-1].status = 2;
-                            return;
+                    for(var cnt = 0 ; cnt<4 ; cnt++){
+                        switch(freezeOrder[cnt]){
+                            case 1:
+                                if(col < brickCol-1 ){
+                                    if(bricks[col+1][row].status != 0){
+                                        bricks[col+1][row].status = 2;
+                                        return;
+                                    }
+                                }
+                                break;
+                            case 2:
+                                if(row < brickRow-1){
+                                    if(bricks[col][row+1].status != 0){
+                                        bricks[col][row+1].status = 2;
+                                        return;
+                                    }
+                                }
+                                break;
+                            case 3:
+                                if(col > 0 ){
+                                    if(bricks[col-1][row].status != 0){
+                                        bricks[col-1][row].status = 2;
+                                        return;
+                                    }
+                                }
+                                break;
+                            case 4:
+                                if(row > 0){
+                                    if(bricks[col][row-1].status != 0){
+                                      bricks[col][row-1].status = 2;
+                                        return;
+                                    }
+                                }
+                                break;
                         }
                     }
                 }

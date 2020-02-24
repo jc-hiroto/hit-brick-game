@@ -30,6 +30,7 @@ var hitPoint = 6;
 var lives = 3;
 var bricks = [];
 var senVal = 3;
+var deadFlag = false;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -254,11 +255,16 @@ function draw(){
             console.log('UPflip');
         }
         else if(y + ballRad > canvas.height - paddleHeight  && lives!=0){
-            if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth){
+            if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth && !deadFlag){
+                deadFlag = false;
                 dy = -dy;
-                console.log('DOWNflip')
+                console.log('DOWNflip, deadFlag FALSE');
             }
-            else if(y + dy > canvas.height){
+            else{
+                deadFlag = true;
+                console.log('deadFlag TRUE');
+            }
+            if(y  > canvas.height && deadFlag){
                 lives--;
                 if(!lives){
                     alert("=== GAME OVER === \n [ Your Score: "+score+" ]");
@@ -276,6 +282,8 @@ function draw(){
                     leftPressed = false;
                     rightPressed = false;
                     downPressed = false;
+                    deadFlag = false;
+                    console.log('deadFlag RESET');
                 }
             }
         }

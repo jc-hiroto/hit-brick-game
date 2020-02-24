@@ -43,6 +43,9 @@ function brickInit(){
         bricks[col] = [];
         for(var row = 0; row<brickRow; row++){
             bricks[col][row] = {x: 0, y:0, status:1};
+            if(Math.floor(Math.random()*10) == 7){
+                bricks[col][row].status = 2;
+            }
         }
     }
 }
@@ -87,7 +90,18 @@ function drawBricks(){
                 bricks[col][row].y = brickY;
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                ctx.fillStyle = "0095DD";
+                ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath();
+            }
+            else if(bricks[col][row].status == 2){
+                var brickX = (col*(brickWidth+brickPadding))+brickOffsetLeft;
+                var brickY = (row*(brickHeight+brickPadding))+brickOffsetTop;
+                bricks[col][row].x = brickX;
+                bricks[col][row].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = "#4B0091";
                 ctx.fill();
                 ctx.closePath();
             }
@@ -106,7 +120,7 @@ function drawball(){
 function drawPaddle(){
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = "0095DD";
+    ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
 }
@@ -137,6 +151,18 @@ function collisionDetection(){
                     }
                 }
             }
+            else if(b.status == 2){
+                if((x+ballRad>b.x && x+ballRad<b.x+brickWidth && y>b.y && y<b.y+brickHeight)||(x-ballRad>b.x && x-ballRad<b.x+brickWidth && y>b.y && y<b.y+brickHeight)){
+                    dx=-dx;
+                    b.status = 1;
+                    score += hitPoint;
+                }
+                else if((x>b.x && x<b.x+brickWidth && y-ballRad>b.y && y-ballRad<b.y+brickHeight)||(x>b.x && x<b.x+brickWidth && y+ballRad>b.y && y+ballRad<b.y+brickHeight)){
+                    dy=-dy
+                    b.status = 1;
+                    score += hitPoint;
+                }
+            }
         }
     }
 }
@@ -159,7 +185,41 @@ function drawStartMessage(){
     ctx.fillText("Press Down Key to Start", canvas.width/2-100, canvas.height/2);
 }
 
-
+function freezeGrow(){
+    for(var col = 0; col<brickCol; col++){
+        for(var row = 0; row<brickRow; row++){
+            var b = bricks[col][row];
+            if(b.status == 2){
+                if(Math.floor(Math.random()*500) == 1){
+                    if(col < brickCol-1 ){
+                        if(bricks[col+1][row].status != 0){
+                            bricks[col+1][row].status = 2;
+                            return;
+                        }
+                    }
+                    if(row < brickRow-1){
+                        if(bricks[col][row+1].status != 0){
+                            bricks[col][row+1].status = 2;
+                            return;
+                        }
+                    }
+                    if(col > 0 ){
+                        if(bricks[col-1][row].status != 0){
+                            bricks[col-1][row].status = 2;
+                            return;
+                        }
+                    }
+                    if(row > 0){
+                        if(bricks[col][row-1].status != 0){
+                            bricks[col][row-1].status = 2;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -222,6 +282,7 @@ function draw(){
         if(x + dx < ballRad || x + dx + ballRad> canvas.width){
             dx = -dx;
         }
+        freezeGrow();
     }
     requestAnimationFrame(draw);
 }

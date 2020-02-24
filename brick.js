@@ -86,6 +86,41 @@ function mouseMoveHandler(e){
 
 }
 
+function konami(){
+    var konamikeys = [38,38,40,40,37,39,37,39,66,65],
+        started = false,
+        count = 0;
+
+    $(document).keydown(function(e){
+        function reset(){
+            started = false;
+            count = 0;
+            return;
+        };
+        key = e.keyCode;
+        if(!started){
+            if(key == 38){
+                started = true;
+            }
+        }
+        if(started){
+            if (konamikeys[count] == key){
+                count++;
+            }
+            else{
+                reset();
+            }
+            if (count == 10){
+                alert('Konami code? So what?');
+                reset();
+            }
+        }
+        else {
+            reset();
+        }
+    });
+}
+
 function drawBricks(){
     for(var col = 0; col<brickCol; col++){
         for(var row = 0; row<brickRow; row++){
@@ -237,6 +272,7 @@ function draw(){
     drawball();
     collisionDetection();
     pauseListener();
+    konami();
     if(!startcheck){
         $(document).one("keydown",function(e) {
             if(e.keyCode != KEYCODE_ESC){

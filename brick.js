@@ -116,8 +116,18 @@ function collisionDetection(){
         for(var row = 0; row<brickRow; row++){
             var b = bricks[col][row];
             if(b.status == 1){
-                if(x+ballRad>b.x && x-ballRad<b.x+brickWidth && y+ballRad>b.y && y-ballRad<b.y+brickHeight){
-                    dy = -dy;
+                if((x+ballRad>b.x && x+ballRad<b.x+brickWidth && y>b.y && y<b.y+brickHeight)||(x-ballRad>b.x && x-ballRad<b.x+brickWidth && y>b.y && y<b.y+brickHeight)){
+                    dx=-dx;
+                    b.status = 0;
+                    score += hitPoint;
+                    totalBrick++;
+                    if(totalBrick == brickRow * brickCol){
+                        alert("### YOU WIN! ###\n");
+                        document.location.reload();
+                    }
+                }
+                else if((x>b.x && x<b.x+brickWidth && y-ballRad>b.y && y-ballRad<b.y+brickHeight)||(x>b.x && x<b.x+brickWidth && y+ballRad>b.y && y+ballRad<b.y+brickHeight)){
+                    dy=-dy
                     b.status = 0;
                     score += hitPoint;
                     totalBrick++;
@@ -134,7 +144,7 @@ function collisionDetection(){
 function drawScore(){
     ctx.font = "16px Arial";
     ctx.fillStyle = "0095DD";
-    ctx.fillText("Score: " +score, 18, 20);
+    ctx.fillText("Score: " +totalBrick, 18, 20);
 }
 
 function drawLives(){

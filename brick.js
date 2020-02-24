@@ -3,6 +3,9 @@ var ctx = canvas.getContext("2d");
 var m = Math;
 var x = canvas.width/2;
 var y = canvas.height-40;
+var konamiSwitch = false;
+var themeLight = "#0095DD";
+var themeDark  = "#4A0000";
 var startcheck = false;
 var pause = false;
 var speedVal = 3;
@@ -16,6 +19,7 @@ var speed = 10;
 var paddleHeight = 10;
 var paddleWidth = 75;
 var paddleX = (canvas.width-paddleWidth)/2;
+var paddleSpeed = 0;
 var rightPressed = false;
 var leftPressed = false;
 var downPressed = false;
@@ -59,6 +63,17 @@ function brickInit(){
     }
 }
 
+function themeInit(){
+    if(konamiSwitch){
+            themeLight = "#A60000";
+            themeDark = "#640000";
+        }
+        else{
+            themeLight = "#0095DD";
+            themeDark  = "#4B0091";
+        }
+}
+
 function keyDownHandler(e){
     if(e.key == "Right" || e.key == "ArrowRight"){
         rightPressed = true;
@@ -84,46 +99,36 @@ function keyUpHandler(e){
 
 function mouseMoveHandler(e){
     if(!pause && startcheck){
-       var relativeX = e.clientX - canvas.offsetLeft;
+        var prevX = paddleX;
+        var relativeX = e.clientX - canvas.offsetLeft;
         if(relativeX > 0 && relativeX < canvas.width){
             paddleX = (relativeX - paddleWidth/2);
         }
+        paddleSpeed = paddleX - prevX;
+        paddleSpeed = m.min(paddleSpeed,ballSpeed-1)*(paddleSpeed>0)
+                    + m.max(paddleSpeed,-ballSpeed+1)*(paddleSpeed<0);
     }
 
 }
 
 function konami(){
-    var konamikeys = [38,38,40,40,37,39,37,39,66,65],
-        started = false,
-        count = 0;
-
-    $(document).keydown(function(e){
-        function reset(){
-            started = false;
-            count = 0;
-            return;
-        };
-        key = e.keyCode;
-        if(!started){
-            if(key == 38){
-                started = true;
+    $(document).ready(function () {
+        var index = 0,
+        konamiKey = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        $(document).keydown(
+        function (e) {
+            $('span').removeClass('on');
+            if (e.keyCode == konamiKey[index++]) {
+                if (index == konamiKey.length) {
+                    alert("Konami? huh?");
+                    konamiSwitch = true;
+                    index = 0;
+                }
             }
-        }
-        if(started){
-            if (konamikeys[count] == key){
-                count++;
+            else {
+                index = 0;
             }
-            else{
-                reset();
-            }
-            if (count == 10){
-                alert('Konami code? So what?');
-                reset();
-            }
-        }
-        else {
-            reset();
-        }
+        });
     });
 }
 
@@ -137,7 +142,7 @@ function drawBricks(){
                 bricks[col][row].y = brickY;
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                ctx.fillStyle = "#0095DD";
+                ctx.fillStyle = themeLight;
                 ctx.fill();
                 ctx.closePath();
             }
@@ -148,7 +153,7 @@ function drawBricks(){
                 bricks[col][row].y = brickY;
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                ctx.fillStyle = "#4B0091";
+                ctx.fillStyle = themeDark;
                 ctx.fill();
                 ctx.closePath();
             }
@@ -159,7 +164,7 @@ function drawBricks(){
 function drawball(){
     ctx.beginPath();
     ctx.arc(x, y, ballRad, 0, m.PI*2);
-    ctx.fillStyle = "#0095DD";
+    ctx.fillStyle = themeLight;
     ctx.fill();
     ctx.closePath();
 }
@@ -185,7 +190,7 @@ function randSpeed(){
 function drawPaddle(){
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = "#0095DD";
+    ctx.fillStyle = themeLight;
     ctx.fill();
     ctx.closePath();
 }
@@ -197,20 +202,27 @@ function hitPaddle(){
             console.log('delta EXCEED');
         }
         else{
-            dx += senVal*0.1;
+            paddleSpeed += senVal*0.1;
             console.log('More RIGHT');
         }
-        dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
+        //dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
     }
     else if (leftPressed) {
         if(m.abs(dx - senVal*0.1) > prevSpeed){
             console.log('delta EXCEED');
         }
         else{
-            dx -= senVal*0.1;
+            paddleSpeed -= senVal*0.1;
             console.log('More LEFT');
         }
-        dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
+        //dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
+    }
+    else{
+        if(paddleSpeed != 0){
+            dx += paddleSpeed*0.5;
+            dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2)));
+            console.log("DELTA: ", paddleSpeed*0.5);
+        }
     }
     console.log("prev SPEED: " + prevSpeed+" dx: "+dx+" dy: "+dy);
 }
@@ -259,19 +271,19 @@ function collisionDetection(){
 
 function drawScore(){
     ctx.font = "16px Arial";
-    ctx.fillStyle = "0095DD";
+    ctx.fillStyle = themeLight;
     ctx.fillText("Score: " +score, 18, 20);
 }
 
 function drawLives(){
     ctx.font = "16px Arial";
-    ctx.fillStyle = "0095DD";
+    ctx.fillStyle = themeDark;
     ctx.fillText("Lives: " +lives, canvas.width-65, 20);
 }
 
 function drawStartMessage(){
     ctx.font = "20px Arial";
-    ctx.fillStyle = "0095DD";
+    ctx.fillStyle = themeDark;
     ctx.fillText("Press Any Key to Start", canvas.width/2-100, (brickRow*(brickHeight+brickPadding))+brickOffsetTop+50);
     ctx.fillText("Press Esc to Pause", canvas.width/2-90, (brickRow*(brickHeight+brickPadding))+brickOffsetTop+75);
 }
@@ -334,6 +346,7 @@ function freezeGrow(){
 
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    themeInit();
     drawBricks();
     drawPaddle();
     drawScore();
@@ -341,7 +354,6 @@ function draw(){
     drawball();
     collisionDetection();
     pauseListener();
-    konami();
     if(!startcheck){
         $(document).one("keydown",function(e) {
             if(e.keyCode != KEYCODE_ESC){
@@ -466,6 +478,7 @@ function pauseListener(){
 }
 
 setup();
+konami();
 $("#startBtn").click(function () {
     $("#startScr").hide();
     $("#game").show();

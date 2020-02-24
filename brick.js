@@ -144,7 +144,7 @@ function collisionDetection(){
 function drawScore(){
     ctx.font = "16px Arial";
     ctx.fillStyle = "0095DD";
-    ctx.fillText("Score: " +totalBrick, 18, 20);
+    ctx.fillText("Score: " +score, 18, 20);
 }
 
 function drawLives(){

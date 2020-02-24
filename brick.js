@@ -182,7 +182,7 @@ function drawLives(){
 function drawStartMessage(){
     ctx.font = "20px Arial";
     ctx.fillStyle = "0095DD";
-    ctx.fillText("Press Down Key to Start", canvas.width/2-100, canvas.height/2);
+    ctx.fillText("Press Down Key to Start", canvas.width/2-100, (brickRow*(brickHeight+brickPadding))+brickOffsetTop+50);
 }
 
 function freezeGrow(){

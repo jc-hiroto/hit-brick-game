@@ -3,6 +3,7 @@ var ctx = canvas.getContext("2d");
 var x = canvas.width/2;
 var y = canvas.height-40;
 var startcheck = false;
+var pause = false;
 var speedVal = 3;
 var dxReset = speedVal*1.5;
 var dyReset = speedVal*(-1);
@@ -31,6 +32,7 @@ var lives = 3;
 var bricks = [];
 var senVal = 3;
 var deadFlag = false;
+var KEYCODE_ESC = 27;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -75,10 +77,13 @@ function keyUpHandler(e){
 }
 
 function mouseMoveHandler(e){
-    var relativeX = e.clientX - canvas.offsetLeft;
-    if(relativeX > 0 && relativeX < canvas.width){
-        paddleX = relativeX - paddleWidth/2;
+    if(!pause && startcheck){
+       var relativeX = e.clientX - canvas.offsetLeft;
+        if(relativeX > 0 && relativeX < canvas.width){
+            paddleX = (relativeX - paddleWidth/2);
+        }
     }
+
 }
 
 function drawBricks(){
@@ -183,7 +188,8 @@ function drawLives(){
 function drawStartMessage(){
     ctx.font = "20px Arial";
     ctx.fillStyle = "0095DD";
-    ctx.fillText("Press Down Key to Start", canvas.width/2-100, (brickRow*(brickHeight+brickPadding))+brickOffsetTop+50);
+    ctx.fillText("Press Any Key to Start", canvas.width/2-100, (brickRow*(brickHeight+brickPadding))+brickOffsetTop+50);
+    ctx.fillText("Press Esc to Pause", canvas.width/2-90, (brickRow*(brickHeight+brickPadding))+brickOffsetTop+75);
 }
 
 function freezeGrow(){
@@ -230,24 +236,46 @@ function draw(){
     drawLives();
     drawball();
     collisionDetection();
-    if(rightPressed){
-        paddleX += senVal*1.5;
-        if(paddleX + paddleWidth > canvas.width)
-            paddleX = canvas.width - paddleWidth;
-    }
-    if(leftPressed){
-        paddleX -= senVal*1.5;
-        if(paddleX < 0)
-            paddleX = 0;
-    }
-    if(startcheck == false){
-        if(downPressed){
-            startcheck = true;
-        }
+    pauseListener();
+    if(!startcheck){
+        $(document).one("keydown",function(e) {
+            if(e.keyCode != KEYCODE_ESC){
+                startcheck = true;
+                console.log( "Handler for .keydown() called." );
+            }
+        });
         drawStartMessage();
         x=paddleX+paddleWidth/2;
     }
+    else if(pause){
+        console.log('PAUSE');
+        ctx.beginPath();
+        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(128,128,128,0.5)";
+        ctx.fill();
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.rect(canvas.width/2 - 20, canvas.height/2 - 20, 15, 40);
+        ctx.rect(canvas.width/2 + 5, canvas.height/2 - 20, 15, 40);
+        ctx.fillStyle = "rgba(255,255,255,1)";
+        ctx.fill();
+        ctx.closePath();
+        ctx.font = "20px Arial";
+        ctx.fillText("Press Esc to Continue",canvas.width/2 - 100,canvas.height/2 + 50);
+    }
     else{
+        if(rightPressed){
+            paddleX += senVal*1.5;
+            if(paddleX + paddleWidth > canvas.width){
+                paddleX = canvas.width - paddleWidth;
+            }
+        }
+        if(leftPressed){
+            paddleX -= senVal*1.5;
+            if(paddleX < 0){
+                paddleX = 0;
+            }
+        }
         x += dx;
         y += dy;
         if(y + dy < ballRad){
@@ -315,6 +343,25 @@ function setup(){
         console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
     });
 }
+function pauseListener(){
+    if(!pause && startcheck){
+        $(document).one("keydown", function(e) {
+        if (e.keyCode == KEYCODE_ESC) {
+            pause = true;
+            console.log('You pressed Esc key');
+        }
+    });
+    }
+    if(pause){
+        $(document).one("keydown",function(e) {
+            if(e.keyCode == KEYCODE_ESC){
+                pause = false;
+                console.log( "KeyPRESSED, Continue." );
+            }
+        });
+    }
+}
+
 setup();
 $("#startBtn").click(function () {
     $("#startScr").hide();

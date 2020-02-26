@@ -432,7 +432,7 @@ function draw(){
             if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth && !deadFlag){
                 deadFlag = false;
                 dy = -dy;
-                setTimeout(hitPaddle,10);
+                setTimeout(hitPaddle,20);
             }
             else{
                 deadFlag = true;

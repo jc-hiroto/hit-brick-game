@@ -39,6 +39,7 @@ var bricks = [];
 var senVal = 3;
 var deadFlag = false;
 var KEYCODE_ESC = 27;
+var lastCollisionTime = 0;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -197,6 +198,8 @@ function drawPaddle(){
 
 function hitPaddle(){
     var prevSpeed = ballSpeed;
+    var prevdx = dx;
+    var prevdy = dy;
     if(rightPressed){
         if(m.abs(dx + senVal*0.1) > prevSpeed){
             console.log('delta EXCEED');
@@ -223,11 +226,28 @@ function hitPaddle(){
             dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2)));
             console.log("DELTA: ", paddleSpeed*0.5);
         }
+        speedCheck();
+        if(ballSpeed > 7.4){
+            dx -= paddleSpeed*0.25;
+            dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2)));
+            console.log("adjust speed,DELTA: ", paddleSpeed*0.25);
+        }
+    }
+    speedCheck();
+    if(ballSpeed > 7.4 && prevSpeed > 7.4){
+        dy = -prevdy;
+        dx = prevdx;
+        console.log("Too fast.");
+        return;
     }
     console.log("prev SPEED: " + prevSpeed+" dx: "+dx+" dy: "+dy);
 }
 
 function collisionDetection(){
+    var DD = new Date();
+    if(DD.getTime() - lastCollisionTime <= 50){
+        return;
+    }
     for(var col = 0; col<brickCol; col++){
         for(var row = 0; row<brickRow; row++){
             var b = bricks[col][row];
@@ -237,6 +257,7 @@ function collisionDetection(){
                     b.status = 0;
                     score += hitPoint;
                     totalBrick++;
+                    lastCollisionTime = DD.getTime();
                     if(totalBrick == brickRow * brickCol){
                         alert("### YOU WIN! ###\n");
                         document.location.reload();
@@ -247,6 +268,7 @@ function collisionDetection(){
                     b.status = 0;
                     score += hitPoint;
                     totalBrick++;
+                    lastCollisionTime = DD.getTime();
                     if(totalBrick == brickRow * brickCol){
                         alert("### YOU WIN! ###\n");
                         document.location.reload();
@@ -258,11 +280,13 @@ function collisionDetection(){
                     dx=-dx;
                     b.status = 1;
                     score += hitPoint;
+                    lastCollisionTime = DD.getTime();
                 }
                 else if((x>b.x && x<b.x+brickWidth && y-ballRad>b.y && y-ballRad<b.y+brickHeight)||(x>b.x && x<b.x+brickWidth && y+ballRad>b.y && y+ballRad<b.y+brickHeight)){
                     dy=-dy;
                     b.status = 1;
                     score += hitPoint;
+                    lastCollisionTime = DD.getTime();
                 }
             }
         }

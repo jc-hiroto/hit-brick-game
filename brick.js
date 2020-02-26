@@ -12,6 +12,7 @@ var speedVal = 3;
 var dxReset = speedVal*1.5;
 var dyReset = speedVal*(-1);
 var ballSpeed = m.sqrt(dxReset**2 + dyReset**2);
+var ballSpeedThreshold = 7.0;
 var dx = dxReset;
 var dy = dyReset;
 var ballRad = 10;
@@ -99,6 +100,7 @@ function keyUpHandler(e){
 }
 
 function mouseMoveHandler(e){
+    var paddleTime = new Date();
     if(!pause && startcheck){
         var prevX = paddleX;
         var relativeX = e.clientX - canvas.offsetLeft;
@@ -172,7 +174,7 @@ function drawball(){
 
 function speedCheck(){
     ballSpeed = m.sqrt(dx*dx + dy*dy);
-    console.log("BALL speed: " + ballSpeed);
+    //console.log("BALL speed: " + ballSpeed);
 }
 
 function randSpeed(){
@@ -205,36 +207,44 @@ function hitPaddle(){
             console.log('delta EXCEED');
         }
         else{
-            paddleSpeed += senVal*0.1;
+<<<<<<< Updated upstream
+            dx += senVal*0.1;
+=======
+            paddleSpeed += senVal*0.2;
+>>>>>>> Stashed changes
             console.log('More RIGHT');
         }
-        //dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
+        dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
     }
     else if (leftPressed) {
         if(m.abs(dx - senVal*0.1) > prevSpeed){
             console.log('delta EXCEED');
         }
         else{
-            paddleSpeed -= senVal*0.1;
+<<<<<<< Updated upstream
+            dx -= senVal*0.1;
+=======
+            paddleSpeed -= senVal*0.2;
+>>>>>>> Stashed changes
             console.log('More LEFT');
         }
-        //dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
+        dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
     }
     else{
         if(paddleSpeed != 0){
             dx += paddleSpeed*0.5;
             dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2)));
-            console.log("DELTA: ", paddleSpeed*0.5);
+            console.log("Mouse DELTA: ", paddleSpeed*0.5);
         }
         speedCheck();
-        if(ballSpeed > 7.4){
+        if(ballSpeed > ballSpeedThreshold){
             dx -= paddleSpeed*0.25;
             dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2)));
-            console.log("adjust speed,DELTA: ", paddleSpeed*0.25);
+            console.log("adjust speed, Mouse DELTA: ", paddleSpeed*0.25);
         }
     }
     speedCheck();
-    if(ballSpeed > 7.4 && prevSpeed > 7.4){
+    if(ballSpeed > ballSpeedThreshold && prevSpeed > ballSpeedThreshold){
         dy = -prevdy;
         dx = prevdx;
         console.log("Too fast.");
@@ -386,7 +396,6 @@ function draw(){
         $(document).one("keydown",function(e) {
             if(e.keyCode != KEYCODE_ESC){
                 startcheck = true;
-                console.log( "Handler for .keydown() called." );
             }
         });
         drawStartMessage();
@@ -455,7 +464,6 @@ function draw(){
                     rightPressed = false;
                     downPressed = false;
                     deadFlag = false;
-                    console.log('deadFlag RESET');
                 }
             }
         }
@@ -491,7 +499,6 @@ function pauseListener(){
         $(document).one("keydown", function(e) {
         if (e.keyCode == KEYCODE_ESC) {
             pause = true;
-            console.log('You pressed Esc key');
         }
     });
     }
@@ -499,7 +506,6 @@ function pauseListener(){
         $(document).one("keydown",function(e) {
             if(e.keyCode == KEYCODE_ESC){
                 pause = false;
-                console.log( "KeyPRESSED, Continue." );
             }
         });
     }

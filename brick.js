@@ -207,11 +207,7 @@ function hitPaddle(){
             console.log('delta EXCEED');
         }
         else{
-<<<<<<< Updated upstream
             dx += senVal*0.1;
-=======
-            paddleSpeed += senVal*0.2;
->>>>>>> Stashed changes
             console.log('More RIGHT');
         }
         dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;
@@ -221,11 +217,7 @@ function hitPaddle(){
             console.log('delta EXCEED');
         }
         else{
-<<<<<<< Updated upstream
             dx -= senVal*0.1;
-=======
-            paddleSpeed -= senVal*0.2;
->>>>>>> Stashed changes
             console.log('More LEFT');
         }
         dy = (-1) * m.sqrt(m.abs(m.pow(prevSpeed,2) - m.pow(dx,2))) - 0.05;

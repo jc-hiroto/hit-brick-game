@@ -12,7 +12,7 @@ var speedVal = 3;
 var dxReset = speedVal*1.5;
 var dyReset = speedVal*(-1);
 var ballSpeed = m.sqrt(dxReset**2 + dyReset**2);
-var ballSpeedThreshold = 7.0;
+var ballSpeedThreshold = 7.5;
 var dx = dxReset;
 var dy = dyReset;
 var ballRad = 10;
@@ -41,6 +41,7 @@ var senVal = 3;
 var deadFlag = false;
 var KEYCODE_ESC = 27;
 var lastCollisionTime = 0;
+var counter = 10;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -101,7 +102,7 @@ function keyUpHandler(e){
 
 function mouseMoveHandler(e){
     var paddleTime = new Date();
-    if(!pause && startcheck){
+    if(!pause && startcheck && konamiSwitch){
         var prevX = paddleX;
         var relativeX = e.clientX - canvas.offsetLeft;
         if(relativeX > 0 && relativeX < canvas.width){
@@ -237,7 +238,7 @@ function hitPaddle(){
     }
     speedCheck();
     if(ballSpeed > ballSpeedThreshold && prevSpeed > ballSpeedThreshold){
-        dy = -prevdy;
+        dy = (-1)*m.abs(prevdy);
         dx = prevdx;
         console.log("Too fast.");
         return;
@@ -410,6 +411,7 @@ function draw(){
         ctx.fillText("Press Esc to Continue",canvas.width/2 - 100,canvas.height/2 + 50);
     }
     else{
+        collisionDelayCounter();
         speedCheck();
         if(rightPressed){
             paddleX += senVal*1.5;
@@ -429,14 +431,20 @@ function draw(){
             dy = -dy;
         }
         else if(y + ballRad > canvas.height - paddleHeight  && lives!=0){
-            if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth && !deadFlag){
-                deadFlag = false;
-                dy = -dy;
-                setTimeout(hitPaddle,20);
+            if(counter > 20){
+                if(x+ballRad > paddleX && x - ballRad < paddleX+paddleWidth && !deadFlag){
+                    deadFlag = false;
+                    dy = m.abs(dy)*(-1);
+                    setTimeout(hitPaddle,10);
+                    y = canvas.height - paddleHeight - ballRad - 4;
+                    console.log('DOWN FLIP ballY:'+y);
+                }
+                else{
+                    deadFlag = true;
+                }
+            counter = 0;
             }
-            else{
-                deadFlag = true;
-            }
+
             if(y  > canvas.height && deadFlag){
                 lives--;
                 if(!lives){
@@ -486,6 +494,15 @@ function setup(){
         console.log("speedVal:"+speedVal+" dx:"+dx+" dy:"+dy);
     });
 }
+function collisionDelayCounter(){
+    counter++;
+    //console.log('counter'+counter);
+    if(counter>100000){
+        counter = 0;
+        console.log('Counter MAX: RESET');
+    }
+}
+
 function pauseListener(){
     if(!pause && startcheck){
         $(document).one("keydown", function(e) {
@@ -508,6 +525,14 @@ konami();
 $("#startBtn").click(function () {
     $("#startScr").hide();
     $("#game").show();
+    if(konamiSwitch){
+        brickRow = 5;
+        level = 5;
+        speedVal = 7;
+        ballSpeedThreshold = 20;
+        ballRad = 4;
+        paddleWidth -= 30;
+    }
     setSpeed();
     brickInit();
     startcheck = false;
